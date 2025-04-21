@@ -54,6 +54,7 @@ fun DonationCard(
     dateCreated: String,
     onClickDelete: () -> Unit,
     onClickDonationDetails: () -> Unit,
+    onRefreshList: () -> Unit,
 ) {
     Card(
         border = BorderStroke(1.dp, Color.Black),
@@ -62,12 +63,16 @@ fun DonationCard(
         ),
         modifier = Modifier.padding(vertical = 2.dp, horizontal = 2.dp)
     ) {
-        DonationCardContent(paymentType,
+        DonationCardContent(
+            paymentType,
             paymentAmount,
             message,
             dateCreated,
             onClickDelete,
-            onClickDonationDetails)
+            onClickDonationDetails,
+            onRefreshList,
+        )
+
     }
 }
 
@@ -78,7 +83,9 @@ private fun DonationCardContent(
     message: String,
     dateCreated: String,
     onClickDelete: () -> Unit,
-    onClickDonationDetails: () -> Unit
+    onClickDonationDetails: () -> Unit,
+    onRefreshList: () -> Unit
+
 ) {
     var expanded by remember { mutableStateOf(false) }
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
@@ -144,7 +151,9 @@ private fun DonationCardContent(
                     if (showDeleteConfirmDialog) {
                         showDeleteAlert(
                             onDismiss = { showDeleteConfirmDialog = false },
-                            onDelete = onClickDelete
+                            onDelete = onClickDelete,
+
+                            onRefresh = onRefreshList
                         )
                     }
                 }
@@ -167,14 +176,21 @@ private fun DonationCardContent(
 @Composable
 fun showDeleteAlert(
     onDismiss: () -> Unit,
-    onDelete: () -> Unit) {
+    onDelete: () -> Unit,
+    onRefresh: () -> Unit,
+
+    ) {
+
     AlertDialog(
         onDismissRequest = onDismiss ,
         title = { Text(stringResource(id = R.string.confirm_delete)) },
         text = { Text(stringResource(id = R.string.confirm_delete_message)) },
         confirmButton = {
             Button(
-                onClick = { onDelete() }
+                onClick = {
+                    onDelete()
+                    onRefresh()
+                }
             ) { Text("Yes") }
         },
         dismissButton = {
@@ -197,7 +213,8 @@ fun DonationCardPreview() {
             """.trimIndent(),
             dateCreated = DateFormat.getDateTimeInstance().format(Date()),
             onClickDelete = { },
-            onClickDonationDetails = {}
+            onClickDonationDetails = {},
+            onRefreshList = {   }
         )
     }
 }

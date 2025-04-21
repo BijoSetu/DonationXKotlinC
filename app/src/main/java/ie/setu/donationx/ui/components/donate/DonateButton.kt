@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ie.setu.donationx.R
 import ie.setu.donationx.data.DonationModel
 import ie.setu.donationx.data.fakeDonations
+import ie.setu.donationx.ui.components.general.ShowLoader
 import ie.setu.donationx.ui.screens.donate.DonateViewModel
 import ie.setu.donationx.ui.screens.report.ReportViewModel
 import ie.setu.donationx.ui.theme.DonationXTheme
@@ -47,6 +48,13 @@ fun DonateButton(
     var totalDonated = donations.sumOf { it.paymentAmount }
     val context = LocalContext.current
     val message = stringResource(R.string.limitExceeded,donation.paymentAmount)
+    val isError = donateViewModel.isErr.value
+    val error = donateViewModel.error.value
+    val isLoading = donateViewModel.isLoading.value
+
+    if(isLoading) ShowLoader("Trying to Donate...")
+
+
 
     Row {
         Button(
@@ -97,6 +105,15 @@ fun DonateButton(
                 }
             })
     }
+
+    //Required to refresh our 'totalDonated'
+    if(isError)
+        Toast.makeText(context,"Unable to Donate at this Time...",
+            Toast.LENGTH_SHORT).show()
+    else
+        reportViewModel.getDonations()
+
+
 }
 
 @Preview(showBackground = true)

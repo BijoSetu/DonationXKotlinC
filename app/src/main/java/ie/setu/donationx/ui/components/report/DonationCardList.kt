@@ -18,11 +18,13 @@ internal fun DonationCardList(
     modifier: Modifier = Modifier,
     onDeleteDonation: (DonationModel) -> Unit,
     onClickDonationDetails: (Int) -> Unit,
-) {
+    onRefreshList: () -> Unit,
+
+    ) {
     LazyColumn {
         items(
             items = donations,
-            key = { donation -> donation.id }
+            key = { donation -> donation._id }
         ) { donation ->
             DonationCard(
                 paymentType = donation.paymentType,
@@ -30,7 +32,9 @@ internal fun DonationCardList(
                 message = donation.message,
                 dateCreated = DateFormat.getDateTimeInstance().format(donation.dateDonated),
                 onClickDelete = { onDeleteDonation(donation) },
-                onClickDonationDetails = { onClickDonationDetails(donation.id) }
+                onClickDonationDetails = { onClickDonationDetails(donation.id) },
+                onRefreshList = onRefreshList
+
             )
         }
     }
@@ -46,6 +50,7 @@ fun DonationCardListPreview() {
             fakeDonations.toMutableStateList(),
             onDeleteDonation = {},
             onClickDonationDetails = { },
+            onRefreshList = {}
         )
         }
     }
